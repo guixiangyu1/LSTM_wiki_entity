@@ -215,11 +215,14 @@ class CoNLLDataset(object):
                     tag_pre = tag.split('-')[0]
                     tag_suf = tag.split('-')[-1]
                     if tag_pre == 'I':
-                        chunk = chunk + "$@&" + word
+                        chunk = chunk + word + "$@&"
                     else:
                         if len(chunk) != 0:
                             words += [self.processing_word(chunk)]
-                        chunk = word
+                            if tag_pre == 'O':
+                                chunk = word
+                            else:
+                                chunk = word + "$@&"
                         if tag_pre == 'B':
                             mask += [True]
                             tags += [self.processing_tag(tag_suf)]
@@ -268,30 +271,42 @@ def get_vocabs(datasets):
     print("- done. {} tokens".format(len(vocab_words)))
     return vocab_words, vocab_tags
 
-def entity2vocab(datasets, vocab):
+def entity2vocab(filename, vocab):
+    print("- done. {} sahred tokens".format(len(vocab)))
     print("Add entity to vocab $@&")
-    chunk = ""
-    for dataset in datasets:
-        for words, tags in dataset:
-            for word, tag in zip(words, tags):
-                tag_pre = tag.split('-')[0]
-                if tag_pre == 'B':
-                    if len(chunk) == 0:
-                        chunk = word
+    i = 0
+    with open(filename) as f:
+        for line in f:
+            line = line.strip()
+            if len(line)!=0:
+                entity_num = line.split(',')[-2]
+                if entity_num.isdigit():
+                    if entity_num in vocab:
+                        i += 1
                     else:
-                        vocab.add(chunk)
-                        chunk = word
-                if tag_pre == 'I':
-                    chunk = chunk + "$@&" + word
-                if tag_pre == 'O':
-                    if len(chunk) != 0:
-                        vocab.add(chunk)
-                        chunk = ""
-            if len(chunk) != 0:
-                vocab.add(chunk)
-                chunk = ""
+                        vocab.add(entity_num)
+    # for dataset in datasets:
+    #     for words, tags in dataset:
+    #         for word, tag in zip(words, tags):
+    #             tag_pre = tag.split('-')[0]
+    #             if tag_pre == 'B':
+    #                 if len(chunk) == 0:
+    #                     chunk = word + "$@&"
+    #                 else:
+    #                     vocab.add(chunk)
+    #                     chunk = word
+    #             if tag_pre == 'I':
+    #                 chunk = chunk + word + "$@&"
+    #             if tag_pre == 'O':
+    #                 if len(chunk) != 0:
+    #                     vocab.add(chunk)
+    #                     chunk = ""
+    #         if len(chunk) != 0:
+    #             vocab.add(chunk)
+    #             chunk = ""
 
     print("- done. {} tokens".format(len(vocab)))
+    print("reduplicate num: ", i)
     return vocab
 
 def get_char_vocab(dataset):
@@ -397,16 +412,16 @@ def export_trimmed_glove_vectors(vocab, glove_filename, trimmed_filename, dim):
                 word_idx = vocab[word]
                 embeddings[word_idx] = np.asarray(embedding)
 
-    for keyword in vocab:
-        embedding_total = []
-        if "$@&" in keyword:
-            keyword_index = vocab[keyword]
-            keyword = keyword.split("$@&")
-            for word in keyword:
-                if word in vocab:
-                    word_idx = vocab[word]
-                    embedding_total.append(embeddings[word_idx])
-                    embeddings[keyword_index] = np.mean(embedding_total, axis=0)
+    # for keyword in vocab:
+    #     embedding_total = []
+    #     if "$@&" in keyword:
+    #         keyword_index = vocab[keyword]
+    #         keyword = keyword.strip("$@&").split("$@&")
+    #         for word in keyword:
+    #             if word in vocab:
+    #                 word_idx = vocab[word]
+    #                 embedding_total.append(embeddings[word_idx])
+    #                 embeddings[keyword_index] = np.mean(embedding_total, axis=0)
 
     np.savez_compressed(trimmed_filename, embeddings=embeddings)    #压缩词嵌入到文件中，并且名字为embeddings
 

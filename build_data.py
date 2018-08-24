@@ -37,7 +37,7 @@ def main():
     vocab.add(UNK)
     vocab.add(NUM)                                             # 手动添加
 
-    vocab = entity2vocab(datasets=[train, dev, test], vocab=vocab)
+    vocab = entity2vocab("data/num_entity_distance3.txt", vocab=vocab)
 
     # Save vocab
     write_vocab(vocab, config.filename_words)

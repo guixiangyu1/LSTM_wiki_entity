@@ -66,9 +66,9 @@ class Config():
     dim_char = 100
 
     # glove files
-    filename_glove = "data/glove.6B/glove.6B.{}d.txt".format(dim_word)
+    filename_glove = "data/WikipediaClean5Negative300Skip10.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
-    filename_trimmed = "data/glove.6B.{}d.trimmed.npz".format(dim_word)
+    filename_trimmed = "data/WikipediaClean5Negative300Skip10.npz"
     use_pretrained = True
 
     # dataset
