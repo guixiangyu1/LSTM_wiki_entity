@@ -499,7 +499,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
         # 2. get id of word
         if vocab_words is not None:
             if "$@&" in word:
-                print(word)
+                # print(word)
                 entity = word.replace("$@&", " ").strip()
 
                 num = entity2num[entity]
