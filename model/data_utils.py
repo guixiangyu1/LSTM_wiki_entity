@@ -247,14 +247,14 @@ class CoNLLDataset(object):
 
 
 
-def wiki_entity(filename):
+def entity_in_dataset(filename):
     num2entity = {}
     with open(filename) as f:
         for line in f:
             line = line.strip()
             if len(line)!=0:
-                word = line.split(',')[1]
-                entity_num = line.split(',')[0].split(':')[-1]
+                word = line.split(',')[0]
+                entity_num = line.split(',')[-2]
                 num2entity[entity_num] = word.lower()
     return  num2entity
 
@@ -469,7 +469,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
-    num2entity = wiki_entity("data/id_title_map.csv")  # all entity_wiki {index_num:word}
+    num2entity = entity_in_dataset("data/num_entity_distance3.txt")  # all entity_wiki {index_num:word}
     entity2num = {num2entity[num]: num for num in num2entity}
     def f(word):
         # 0. get chars of words
