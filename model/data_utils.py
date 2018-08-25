@@ -219,17 +219,22 @@ class CoNLLDataset(object):
                         chunk = chunk + word + "$@&"
                     else:
                         if len(chunk) != 0:
+
                             words += [self.processing_word(chunk)]
-                            if tag_pre == 'O':
-                                chunk = word
-                            else:
-                                chunk = word + "$@&"
+                        else:
+                            pass
+                        # if tag_pre == 'O':
+                        #     chunk = word
+                        # else:
+                        #     chunk = word + "$@&"
                         if tag_pre == 'B':
+                            chunk = word + "$@&"
                             mask += [True]
                             tags += [self.processing_tag(tag_suf)]
                         else:
                             mask += [False]
                             tags += [0]
+                            chunk = word
 
 
 
@@ -248,15 +253,18 @@ class CoNLLDataset(object):
 
 
 def entity_in_dataset(filename):
-    num2entity = {}
+    entity2num = {}
     with open(filename) as f:
         for line in f:
             line = line.strip()
             if len(line)!=0:
-                word = line.split(',')[0]
+                if ",,," in line:
+                    word = line.split(',,,')[0]
+                else:
+                    word = line.split(',')[0]
                 entity_num = line.split(',')[-2]
-                num2entity[entity_num] = word.lower()
-    return  num2entity
+                entity2num[word] = entity_num
+    return  entity2num
 
 def get_vocabs(datasets):
     """Build vocabulary from an iterable of datasets objects
@@ -469,13 +477,13 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
-    num2entity = entity_in_dataset("data/num_entity_distance3.txt")  # all entity_wiki {index_num:word}
-    entity2num = {num2entity[num]: num for num in num2entity}
+    entity2num = entity_in_dataset("data/num_entity_distance3.txt")  # all entity_wiki {index_num:word}
+
     def f(word):
         # 0. get chars of words
         if vocab_chars is not None and chars == True:
             char_ids = []
-            entity_words = word.strip("$@&").split("$@&")
+            entity_words = word.replace("$@&",' ').strip().split("$@&")
             for entity_word in entity_words:
                 for char in entity_word:
                     # ignore chars out of vocabulary
@@ -491,7 +499,9 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
         # 2. get id of word
         if vocab_words is not None:
             if "$@&" in word:
-                entity = word.strip("$@&").replace("$@&", " ")
+                print(word)
+                entity = word.replace("$@&", " ").strip()
+
                 num = entity2num[entity]
                 if num.isdigit():
                     word = vocab_words[num]
