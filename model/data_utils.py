@@ -184,6 +184,7 @@ class CoNLLDataset(object):
 
 
 
+
     def __iter__(self):
         niter = 0
         chunk = ""
@@ -229,8 +230,6 @@ class CoNLLDataset(object):
                         else:
                             mask += [False]
                             tags += [0]
-                            
-
 
 
 
@@ -245,6 +244,19 @@ class CoNLLDataset(object):
                 self.length += 1
 
         return self.length
+
+
+
+def wiki_entity(filename):
+    num2entity = {}
+    with open(filename) as f:
+        for line in f:
+            line = line.strip()
+            if len(line)!=0:
+                word = line.split(',')[1]
+                entity_num = line.split(',')[0].split(':')[-1]
+                num2entity[entity_num] = word.lower()
+    return  num2entity
 
 def get_vocabs(datasets):
     """Build vocabulary from an iterable of datasets objects
@@ -457,13 +469,15 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
+    num2entity = wiki_entity("data/id_title_map.csv")  # all entity_wiki {index_num:word}
+    entity2num = {num2entity[num]: num for num in num2entity}
     def f(word):
         # 0. get chars of words
         if vocab_chars is not None and chars == True:
             char_ids = []
-            entity_words = word.split("$@&")
-            for word in entity_words:
-                for char in word:
+            entity_words = word.stirp("$@&").split("$@&")
+            for entity_word in entity_words:
+                for char in entity_word:
                     # ignore chars out of vocabulary
                     if char in vocab_chars:
                         char_ids += [vocab_chars[char]]      #vocab_chars是个dict， list的+方法，就是往里添加元素[1]+[2]=[1,2]
@@ -476,14 +490,22 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
 
         # 2. get id of word
         if vocab_words is not None:
-            if word in vocab_words:
-                word = vocab_words[word]
-            else:
-                if allow_unk:
-                    word = vocab_words[UNK]
+            if "$@&" in word:
+                entity = word.strip("$@&").replace("$@&", " ")
+                num = entity2num(entity)
+                if num.isdigit():
+                    word = vocab_words[num]
                 else:
-                    raise Exception("Unknow key is not allowed. Check that "\
-                                    "your vocab (tags?) is correct")
+                    word = vocab_words[UNK]
+            else:
+                if word in vocab_words:
+                    word = vocab_words[word]
+                else:
+                    if allow_unk:
+                        word = vocab_words[UNK]
+                    else:
+                        raise Exception("Unknow key is not allowed. Check that "\
+                                        "your vocab (tags?) is correct")
 
         # 3. return tuple char ids, word id
         if vocab_chars is not None and chars == True:

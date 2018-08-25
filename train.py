@@ -10,7 +10,7 @@ def main():
 
     # build model
     model = NERModel(config)
-    model.build("train")
+    model.build()
     # model.restore_session("results/crf/model.weights/") # optional, restore weights
     # model.reinitialize_weights("proj")
 
