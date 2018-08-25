@@ -492,7 +492,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
         if vocab_words is not None:
             if "$@&" in word:
                 entity = word.strip("$@&").replace("$@&", " ")
-                num = entity2num(entity)
+                num = entity2num[entity]
                 if num.isdigit():
                     word = vocab_words[num]
                 else:
