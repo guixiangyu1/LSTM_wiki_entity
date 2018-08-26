@@ -258,11 +258,8 @@ def entity_in_dataset(filename):
         for line in f:
             line = line.strip()
             if len(line)!=0:
-                if ",,," in line:
-                    word = line.split(',,,')[0]
-                else:
-                    word = line.split(',')[0]
-                entity_num = line.split(',')[-2]
+                word = line.split(',,,')[0]
+                entity_num = line.split(',,,')[-2]
                 entity2num[word] = entity_num
     return  entity2num
 
@@ -299,7 +296,7 @@ def entity2vocab(filename, vocab):
         for line in f:
             line = line.strip()
             if len(line)!=0:
-                entity_num = line.split(',')[-2]
+                entity_num = line.split(',,,')[-2]
                 if entity_num.isdigit():
                     if entity_num in vocab:
                         i += 1
@@ -477,7 +474,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
-    entity2num = entity_in_dataset("data/num_entity_distance3.txt")  # all entity_wiki {index_num:word}
+    entity2num = entity_in_dataset("data/num_entity_distance4.txt")  # all entity_wiki {index_num:word}
 
     def f(word):
         # 0. get chars of words
