@@ -69,7 +69,7 @@ class Config():
     filename_glove = "data/WikipediaClean5Negative300Skip10.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
     filename_trimmed = "data/WikipediaClean5Negative300Skip10.npz"
-    use_pretrained = True
+    use_pretrained = False
 
     # dataset
     filename_dev = "data/valid1.txt"
