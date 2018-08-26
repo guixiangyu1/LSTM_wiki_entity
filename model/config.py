@@ -66,9 +66,9 @@ class Config():
     dim_char = 100
 
     # glove files
-    filename_glove = "data/WikipediaClean5Negative300Skip10.txt"
+    filename_glove = "data/WikipediaClean5FineTunedGlove6B"
     # trimmed embeddings (created from glove_filename with build_data.py)
-    filename_trimmed = "data/WikipediaClean5Negative300Skip10.npz"
+    filename_trimmed = "data/WikipediaClean5FineTunedGlove6B.npz"
 
     filename_entity2num = "data/num_entity_distance5.txt"
     use_pretrained = True
