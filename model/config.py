@@ -66,7 +66,7 @@ class Config():
     dim_char = 100
 
     # glove files
-    filename_glove = "data/WikipediaClean5FineTunedGlove6B"
+    filename_glove = "data/WikipediaClean5FineTunedGlove6B.txt"
     # trimmed embeddings (created from glove_filename with build_data.py)
     filename_trimmed = "data/WikipediaClean5FineTunedGlove6B.npz"
 
