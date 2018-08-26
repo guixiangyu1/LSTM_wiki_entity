@@ -2,6 +2,7 @@ import numpy as np
 import os
 
 
+
 # shared global variables to be imported from model also
 UNK = "$UNK$"
 NUM = "$NUM$"
@@ -474,7 +475,7 @@ def get_processing_word(vocab_words=None, vocab_chars=None,
                  = (list of char ids, word id)
 
     """
-    entity2num = entity_in_dataset("data/num_entity_distance4.txt")  # all entity_wiki {index_num:word}
+    entity2num = entity_in_dataset("data/num_entity_distance5.txt")  # all entity_wiki {index_num:word}
 
     def f(word):
         # 0. get chars of words
